@@ -25,46 +25,62 @@ import cconsole from './index';
 // cconsole.info('info msg');
 // cconsole.debug('debug msg');
 
-test('cconsole is instance of CConsole', t => {
-  t.is(typeof cconsole, 'object');
+test.beforeEach(t => {
+  t.context = cconsole.profile();
+});
+
+test('cconsole is instance of CConsole',t => {
+  t.is(typeof t.context, 'object');
 });
 
 test('no transports by default', t => {
-  t.is(cconsole.transports.length, 0);
+  t.is(t.context.transports.length, 0);
 });
 
 test('no transformers by default', t => {
-  t.is(cconsole.transformers.length, 0);
+  t.is(t.context.transformers.length, 0);
 });
 
-test('log without transformers', async t => {
-  t.deepEqual(await cconsole.error('hello'), ['hello']);
-  t.deepEqual(await cconsole.info('hello'), ['hello']);
-  t.deepEqual(await cconsole.log('hello'), ['hello']);
-  t.deepEqual(await cconsole.debug('hello'), ['hello']);
-  t.deepEqual(await cconsole.exception('hello'), ['hello']);
+test('without transformers', async t => {
+  await handlerLogMethods(t, 'hello', ['hello']);
 });
 
-test.skip('add empty transformer', async t => {
-  cconsole.addTransformer((type, resolvedParts) => resolvedParts);
+test('empty transformer', async t => {
+  t.context.addTransformer((type, resolvedParts) => resolvedParts);
 
-  t.deepEqual(await cconsole.error('hello'), ['hello']);
-  t.deepEqual(await cconsole.info('hello'), ['hello']);
-  t.deepEqual(await cconsole.log('hello'), ['hello']);
-  t.deepEqual(await cconsole.debug('hello'), ['hello']);
-  t.deepEqual(await cconsole.exception('hello'), ['hello']);
+  await handlerLogMethods(t, 'hello', ['hello']);
 });
 
-test.skip('add transformer that modifies message', async t => {
-  cconsole.addTransformer((type, resolvedParts) => {
-    resolvedParts.push('!');
+test('transformer that modifies message', async t => {
+  t.context.addTransformer((type, resolvedParts) => resolvedParts.concat('!'));
 
-    return resolvedParts;
-  });
-
-  t.deepEqual(await cconsole.error('hello'), ['hello', '!']);
-  t.deepEqual(await cconsole.info('hello'), ['hello', '!']);
-  t.deepEqual(await cconsole.log('hello'), ['hello', '!']);
-  t.deepEqual(await cconsole.debug('hello'), ['hello', '!']);
-  t.deepEqual(await cconsole.exception('hello'), ['hello', '!']);
+  await handlerLogMethods(t, 'hello', ['hello', '!']);
 });
+
+test('several transformers that modify message', async t => {
+  t.context.addTransformer((type, resolvedParts) => resolvedParts.concat('!'));
+  t.context.addTransformer((type, resolvedParts) => ['!'].concat(resolvedParts));
+
+  await handlerLogMethods(t, 'hello', ['!', 'hello', '!']);
+});
+
+function getExpected(expected, num) {
+  return num === 0 || expected.length === 1 ? expected[0] : expected[num];
+}
+
+/**
+ * Expected might contain 1 element or 6 - each for every method relatively: error, info, log, warn, debug, exception
+ * @param t
+ * @param input
+ * @param expected
+ * @return {Promise.<void>}
+ */
+async function handlerLogMethods(t, input, ...expected) {
+  const cconsole = t.context;
+  t.deepEqual(await cconsole.error(input), getExpected(expected, 0));
+  t.deepEqual(await cconsole.info(input), getExpected(expected, 1));
+  t.deepEqual(await cconsole.log(input), getExpected(expected, 2));
+  t.deepEqual(await cconsole.warn(input), getExpected(expected, 3));
+  t.deepEqual(await cconsole.debug(input), getExpected(expected, 4));
+  t.deepEqual(await cconsole.exception(input), getExpected(expected, 5));
+}

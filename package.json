@@ -14,9 +14,9 @@
   },
   "scripts": {
     "lint": "xo",
-    "test": "npm run lint && ava",
-    "build": "webpack -p",
-    "start": "webpack --watch"
+    "test": "ava",
+    "build": "npm run lint && webpack -p",
+    "start": "npm run lint && webpack --watch"
   },
   "files": [
     "index.js"
