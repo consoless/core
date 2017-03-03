@@ -54,17 +54,19 @@ function reduceTransformers(transformers, type, initialParts) {
 }
 
 function reduceTransports(transports, type, args) {
-  return Promise.all(transports.map(transport => transport(type, args)));
+  return Promise.all(transports.map(transport => transport(type, args))).then(() => args);
 }
 
 function reduceTransportsSync(transports, type, args) {
-  return transports.reduce((result, transport) => {
+  transports.reduce((result, transport) => {
     if (isPromise(result)) {
       return result.then(() => transport(type, args));
     }
 
     return transport(type, args);
   }, null);
+
+  return args;
 }
 
 class CConsole {
@@ -85,7 +87,9 @@ class CConsole {
       modifiers.push(modifierFn);
     }
 
-    this.config.transports[modifierFn.name] = modifierConfig;
+    if (modifierFn.name) {
+      this.config.transports[modifierFn.name] = modifierConfig;
+    }
   }
 
   addTransport(transportFn, config) {

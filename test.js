@@ -25,6 +25,23 @@ import cconsole from './index';
 // cconsole.info('info msg');
 // cconsole.debug('debug msg');
 
+// TODO update
+function spy(fn) {
+  let called = 0;
+  let throwed = 0;
+
+  return (...args) => {
+    try {
+      const result = fn(args);
+      fn.$__called = called++;
+
+      return result;
+    } catch (e) {
+      fn.$__throwed = throwed++;
+    }
+  };
+}
+
 test.beforeEach(t => {
   t.context = cconsole.profile();
 });
@@ -62,6 +79,27 @@ test('several transformers that modify message', async t => {
   t.context.addTransformer((type, resolvedParts) => ['!'].concat(resolvedParts));
 
   await handlerLogMethods(t, 'hello', ['!', 'hello', '!']);
+});
+
+test('transport', async t => {
+  // 6 for transport
+  // 6 for handler
+  t.plan(12);
+
+  t.context.addTransport((type, resolvedParts) => t.pass());
+
+  await handlerLogMethods(t, 'hello', ['hello']);
+});
+
+test('transports', async t => {
+  // 12 for transports
+  // 6 for handler
+  t.plan(18);
+
+  t.context.addTransport((type, resolvedParts) => t.pass());
+  t.context.addTransport((type, resolvedParts) => t.pass());
+
+  await handlerLogMethods(t, 'hello', ['hello']);
 });
 
 function getExpected(expected, num) {
