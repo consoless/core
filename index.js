@@ -155,7 +155,6 @@ class CConsole {
 
         return (this.syncTransports ? reduceTransportsSync : reduceTransports)(this.transports, level, parts);
       });
-    // this.consoleLogProvider(type, args);
   }
 }
 
@@ -169,10 +168,8 @@ cconsole.profile = function (name, options = {}) {
   return new CConsole(options);
 };
 
-// function cconsole(profile) {
-//
-// }
-//
+cconsole.CConsole = CConsole;
+
 cconsole.paranoya = {
   enabled: false,
   secretKey: null
