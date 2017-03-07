@@ -14,7 +14,8 @@
   },
   "scripts": {
     "lint": "xo",
-    "test": "ava",
+    "test": "nyc ava",
+    "test:watch": "npm run test -- -watch",
     "build": "npm run lint && webpack -p",
     "start": "npm run lint && webpack --watch"
   },
@@ -34,6 +35,7 @@
     "babel-loader": "6.2.10",
     "babel-preset-env": "^1.1.8",
     "babel-register": "6.22.0",
+    "nyc": "^10.1.2",
     "webpack": "2.2.1",
     "xo": "^0.17.0"
   },

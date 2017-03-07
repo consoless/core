@@ -3,3 +3,8 @@ node_modules
 dist
 npm-debug.log
 .idea
+
+# instanbul folders
+.nyc_output
+coverage
+
