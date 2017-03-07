@@ -184,6 +184,7 @@ test('transformer:config: empty by default', t => {
 
 test('transformer:config: can be set', t => {
   t.context.addTransformer(function (type, resolvedParts) {
+    t.deepEqual(Object.keys(this.config), ['hello']);
     t.is(this.config.hello, 'world');
 
     return resolvedParts;
@@ -295,6 +296,7 @@ test('transport:config: empty by default', t => {
 
 test('transport:config: can be set', t => {
   t.context.addTransport(function () {
+    t.deepEqual(Object.keys(this.config), ['hello']);
     t.is(this.config.hello, 'world');
   }, {
     hello: 'world'
