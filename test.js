@@ -62,6 +62,10 @@ test('no transformers by default', t => {
   t.is(t.context.transformers.length, 0);
 });
 
+test('message is not modified without transformers and transports', async t => {
+  await handlerLogMethods(t, 'hello', ['hello']);
+});
+
 test('operations with level', t => {
   // ALL consists of four
   t.is(LOG_LEVEL.ALL, LOG_LEVEL.WARN | LOG_LEVEL.ERROR | LOG_LEVEL.INFO | LOG_LEVEL.DEBUG);
@@ -74,20 +78,43 @@ test('operations with level', t => {
 });
 
 test('set level', t => {
-  const _cconsole = cconsole.profile();
+  const _cconsole = t.context;
 
   // default level
-  t.true(_cconsole.level === LOG_LEVEL.ALL);
+  t.is(_cconsole.level, LOG_LEVEL.ALL);
 
   // set ERROR level
   _cconsole.setLevel(LOG_LEVEL.ERROR);
-  t.is(_cconsole.level, LOG_LEVEL.ERROR);
+  t.true(_cconsole.checkLevel(LOG_LEVEL.ERROR));
+
+  _cconsole.setLevel(LOG_LEVEL.WARN | LOG_LEVEL.ERROR);
+  t.true(_cconsole.checkLevel(LOG_LEVEL.WARN));
+  t.true(_cconsole.checkLevel(LOG_LEVEL.ERROR));
+  t.true(_cconsole.checkLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN));
 });
 
-test.todo('log methods are handled depending on level');
+test('log methods are handled depending on level', async t => {
+  // set ERROR level
+  t.context.setLevel(LOG_LEVEL.ERROR);
+  await handlerLogMethods(t, 'hello',
+    ['hello'], // error
+    undefined, // info
+    undefined, // log
+    undefined, // warn
+    undefined, // debug
+    ['hello'] // exception
+  );
 
-test('message is not modified without transformers and transports', async t => {
-  await handlerLogMethods(t, 'hello', ['hello']);
+    // set ERROR and WARN levels
+  t.context.setLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN);
+  await handlerLogMethods(t, 'hello',
+    ['hello'], // error
+    undefined, // info
+    undefined, // log
+    ['hello'], // warn
+    undefined, // debug
+    ['hello'] // exception
+  );
 });
 
 test('transformer is applied', async t => {
@@ -130,6 +157,86 @@ test('transformers are applied consistently', async t => {
   ]);
 });
 
+test('transformer:context: present', async t => {
+  t.context.addTransformer(function (type, resolvedParts) {
+    t.is(typeof this, 'object');
+
+    return resolvedParts;
+  });
+
+  return callLogMethods(t);
+});
+
+test('transformer:config: empty by default', async t => {
+  t.context.addTransformer(function (type, resolvedParts) {
+    t.is(typeof this.config, 'object');
+    t.is(Object.keys(this.config).length, 0);
+
+    return resolvedParts;
+  });
+
+  return callLogMethods(t);
+});
+
+test('transformer:config: can be set', async t => {
+  t.context.addTransformer(function (type, resolvedParts) {
+    t.is(this.config.hello, 'world');
+
+    return resolvedParts;
+  }, {
+    hello: 'world'
+  });
+
+  return callLogMethods(t);
+});
+
+test('transformer(named):config: can be set later', async t => {
+  function helloTransformer(type, resolvedParts) {
+    t.is(this.config.hello, 'foo');
+
+    return resolvedParts;
+  }
+
+  t.context.addTransformer(helloTransformer);
+  t.is(typeof t.context.config.transformers.helloTransformer, 'object');
+  t.context.config.transformers.helloTransformer.hello = 'foo';
+
+  return callLogMethods(t);
+});
+
+test('transformer:config: can be modified by reference', async t => {
+  const config = {
+    hello: 'world'
+  };
+
+  t.context.addTransformer(function (type, resolvedParts) {
+    t.is(this.config.hello, 'foo');
+
+    return resolvedParts;
+  }, config);
+
+  config.hello = 'foo';
+
+  return callLogMethods(t);
+});
+
+test('transformer(named):config: can be modified through config storage', async t => {
+  const config = {
+    hello: 'world'
+  };
+
+  function helloTransformer(type, resolvedParts) {
+    t.is(this.config.hello, 'foo');
+
+    return resolvedParts;
+  }
+
+  t.context.addTransformer(helloTransformer, config);
+  t.context.config.transformers.helloTransformer.hello = 'foo';
+
+  return callLogMethods(t);
+});
+
 test('transport is applied', async t => {
   // 6 for transport
   t.plan(6);
@@ -149,7 +256,7 @@ test('transports are applied synchronous', async t => {
   await callLogMethods(t);
 });
 
-// TODO implement, when config is implemented
+// TODO implement, when cconsole's config is implemented
 test.skip('transports are applied consistently', async t => {
   // 6 for each transport
   t.plan(12);
@@ -163,6 +270,80 @@ test.skip('transports are applied consistently', async t => {
     1, 1, 1, 1, 1, 1,
     2, 2, 2, 2, 2, 2
   ]);
+});
+
+test('transport:context: present', async t => {
+  t.context.addTransport(function () {
+    t.is(typeof this, 'object');
+  });
+
+  return callLogMethods(t);
+});
+
+test('transport:config: empty by default', async t => {
+  t.context.addTransport(function () {
+    t.is(typeof this.config, 'object');
+    t.is(Object.keys(this.config).length, 0);
+  });
+
+  return callLogMethods(t);
+});
+
+test('transport:config: can be set', async t => {
+  t.context.addTransport(function () {
+    t.is(this.config.hello, 'world');
+  }, {
+    hello: 'world'
+  });
+
+  return callLogMethods(t);
+});
+
+test('transport(named):config: can be set later', async t => {
+  function helloTransport(type, resolvedParts) {
+    t.is(this.config.hello, 'foo');
+
+    return resolvedParts;
+  }
+
+  t.context.addTransport(helloTransport);
+  t.is(typeof t.context.config.transports.helloTransport, 'object');
+  t.context.config.transports.helloTransport.hello = 'foo';
+
+  return callLogMethods(t);
+});
+
+test('transport:config: can be modified by reference', async t => {
+  const config = {
+    hello: 'world'
+  };
+
+  t.context.addTransformer(function (type, resolvedParts) {
+    t.is(this.config.hello, 'foo');
+
+    return resolvedParts;
+  }, config);
+
+  config.hello = 'foo';
+
+  return callLogMethods(t);
+});
+
+test('transport(named):config: can be modified through config storage', async t => {
+  const config = {
+    hello: 'world'
+  };
+
+  function helloTransport(type, resolvedParts) {
+    t.is(this.config.hello, 'foo');
+
+    return resolvedParts;
+  }
+
+  t.context.addTransport(helloTransport, config);
+  t.context.config.transports.helloTransport.hello = 'foo';
+
+  return callLogMethods(t);
 });
 
 test('transformer modifies message', async t => {

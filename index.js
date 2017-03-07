@@ -82,22 +82,38 @@ class CConsole {
     };
   }
 
-  addUniqueModifier(modifiers, modifierFn, modifierConfig = {}) {
-    if (modifiers.indexOf(modifierFn) === -1) {
-      modifiers.push(modifierFn);
+  addUniqueModifier(modifiersName, modifierFn, modifierConfig = {}) {
+    const modifiers = this[modifiersName];
+    const modifiersConfig = this.config[modifiersName];
+
+    if (!modifiers) {
+      throw new Error(`Illegal modifier ${modifiersName}`);
     }
 
-    if (modifierFn.name) {
-      this.config.transports[modifierFn.name] = modifierConfig;
+    if (!modifiersConfig) {
+      throw new Error(`Missing config for modifier ${modifiersName}`);
+    }
+
+    if (modifiers.indexOf(modifierFn) === -1) {
+      // const hasConfig = Object.keys(modifierConfig).length > 0;
+      // save config to be able to modify it from outside
+      if (modifierFn.name) {
+        modifiersConfig[modifierFn.name] = modifierConfig;
+      }
+
+      // bind config in any case for usage consistency
+      modifiers.push(modifierFn.bind({
+        config: modifierConfig
+      }));
     }
   }
 
   addTransport(transportFn, config) {
-    this.addUniqueModifier(this.transports, transportFn, config);
+    this.addUniqueModifier('transports', transportFn, config);
   }
 
   addTransformer(transformerFn, config) {
-    this.addUniqueModifier(this.transformers, transformerFn, config);
+    this.addUniqueModifier('transformers', transformerFn, config);
   }
 
   setLevel(level) {
