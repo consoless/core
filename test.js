@@ -62,9 +62,7 @@ test('no transformers by default', t => {
   t.is(t.context.transformers.length, 0);
 });
 
-test('message is not modified without transformers and transports', async t => {
-  await handlerLogMethods(t, 'hello', ['hello']);
-});
+test('message is not modified without transformers and transports', t => handlerLogMethods(t, 'hello', ['hello']));
 
 test('operations with level', t => {
   // ALL consists of four
@@ -117,36 +115,42 @@ test('log methods are handled depending on level', async t => {
   );
 });
 
-test('transformer is applied', async t => {
+test('transformer is applied', t => {
   t.plan(6);
   t.context.addTransformer((type, resolvedParts) => (t.pass(), resolvedParts));
 
-  await callLogMethods(t);
+  return callLogMethods(t);
 });
 
-test('transformers are applied synchronous', async t => {
+test('transformers are applied synchronous', t => {
   t.plan(12);
   t.context.addTransformer((type, resolvedParts) => (t.pass(), resolvedParts));
   t.context.addTransformer((type, resolvedParts) => (t.pass(), resolvedParts));
 
-  await callLogMethods(t);
+  return callLogMethods(t);
 });
 
 test('transformers are applied consistently', async t => {
   const result = [];
 
+  // 50ms delay
   t.context.addTransformer((type, resolvedParts) => {
+    // collect calls
     result.push(1);
 
     return new Promise(resolve => setTimeout(() => resolve(resolvedParts), 50));
   });
+  // 10ms delay
   t.context.addTransformer((type, resolvedParts) => {
+    // collect calls
     result.push(2);
 
     return new Promise(resolve => setTimeout(() => resolve(resolvedParts), 10));
   });
 
   await callLogMethods(t);
+
+  // compare transport calls order
   t.deepEqual(result, [
     1, 2,
     1, 2,
@@ -157,7 +161,7 @@ test('transformers are applied consistently', async t => {
   ]);
 });
 
-test('transformer:context: present', async t => {
+test('transformer:context: present', t => {
   t.context.addTransformer(function (type, resolvedParts) {
     t.is(typeof this, 'object');
 
@@ -167,7 +171,7 @@ test('transformer:context: present', async t => {
   return callLogMethods(t);
 });
 
-test('transformer:config: empty by default', async t => {
+test('transformer:config: empty by default', t => {
   t.context.addTransformer(function (type, resolvedParts) {
     t.is(typeof this.config, 'object');
     t.is(Object.keys(this.config).length, 0);
@@ -178,7 +182,7 @@ test('transformer:config: empty by default', async t => {
   return callLogMethods(t);
 });
 
-test('transformer:config: can be set', async t => {
+test('transformer:config: can be set', t => {
   t.context.addTransformer(function (type, resolvedParts) {
     t.is(this.config.hello, 'world');
 
@@ -190,7 +194,7 @@ test('transformer:config: can be set', async t => {
   return callLogMethods(t);
 });
 
-test('transformer(named):config: can be set later', async t => {
+test('transformer(named):config: can be set later', t => {
   function helloTransformer(type, resolvedParts) {
     t.is(this.config.hello, 'foo');
 
@@ -204,7 +208,7 @@ test('transformer(named):config: can be set later', async t => {
   return callLogMethods(t);
 });
 
-test('transformer:config: can be modified by reference', async t => {
+test('transformer:config: can be modified by reference', t => {
   const config = {
     hello: 'world'
   };
@@ -220,7 +224,7 @@ test('transformer:config: can be modified by reference', async t => {
   return callLogMethods(t);
 });
 
-test('transformer(named):config: can be modified through config storage', async t => {
+test('transformer(named):config: can be modified through config storage', t => {
   const config = {
     hello: 'world'
   };
@@ -237,23 +241,23 @@ test('transformer(named):config: can be modified through config storage', async 
   return callLogMethods(t);
 });
 
-test('transport is applied', async t => {
+test('transport is applied', t => {
   // 6 for transport
   t.plan(6);
 
   t.context.addTransport((type, resolvedParts) => t.pass());
 
-  await callLogMethods(t);
+  return callLogMethods(t);
 });
 
-test('transports are applied synchronous', async t => {
+test('transports are applied synchronous', t => {
   // 6 for each transport
   t.plan(12);
 
   t.context.addTransport((type, resolvedParts) => t.pass());
   t.context.addTransport((type, resolvedParts) => t.pass());
 
-  await callLogMethods(t);
+  return callLogMethods(t);
 });
 
 // TODO implement, when cconsole's config is implemented
@@ -272,7 +276,7 @@ test.skip('transports are applied consistently', async t => {
   ]);
 });
 
-test('transport:context: present', async t => {
+test('transport:context: present', t => {
   t.context.addTransport(function () {
     t.is(typeof this, 'object');
   });
@@ -280,7 +284,7 @@ test('transport:context: present', async t => {
   return callLogMethods(t);
 });
 
-test('transport:config: empty by default', async t => {
+test('transport:config: empty by default', t => {
   t.context.addTransport(function () {
     t.is(typeof this.config, 'object');
     t.is(Object.keys(this.config).length, 0);
@@ -289,7 +293,7 @@ test('transport:config: empty by default', async t => {
   return callLogMethods(t);
 });
 
-test('transport:config: can be set', async t => {
+test('transport:config: can be set', t => {
   t.context.addTransport(function () {
     t.is(this.config.hello, 'world');
   }, {
@@ -299,7 +303,7 @@ test('transport:config: can be set', async t => {
   return callLogMethods(t);
 });
 
-test('transport(named):config: can be set later', async t => {
+test('transport(named):config: can be set later', t => {
   function helloTransport(type, resolvedParts) {
     t.is(this.config.hello, 'foo');
 
@@ -313,7 +317,7 @@ test('transport(named):config: can be set later', async t => {
   return callLogMethods(t);
 });
 
-test('transport:config: can be modified by reference', async t => {
+test('transport:config: can be modified by reference', t => {
   const config = {
     hello: 'world'
   };
@@ -329,7 +333,7 @@ test('transport:config: can be modified by reference', async t => {
   return callLogMethods(t);
 });
 
-test('transport(named):config: can be modified through config storage', async t => {
+test('transport(named):config: can be modified through config storage', t => {
   const config = {
     hello: 'world'
   };
@@ -346,17 +350,17 @@ test('transport(named):config: can be modified through config storage', async t 
   return callLogMethods(t);
 });
 
-test('transformer modifies message', async t => {
+test('transformer modifies message', t => {
   t.context.addTransformer((type, resolvedParts) => resolvedParts.concat('!'));
 
-  await handlerLogMethods(t, 'hello', ['hello', '!']);
+  return handlerLogMethods(t, 'hello', ['hello', '!']);
 });
 
-test('transformers modify message', async t => {
+test('transformers modify message', t => {
   t.context.addTransformer((type, resolvedParts) => resolvedParts.concat('!'));
   t.context.addTransformer((type, resolvedParts) => ['!'].concat(resolvedParts));
 
-  await handlerLogMethods(t, 'hello', ['!', 'hello', '!']);
+  return handlerLogMethods(t, 'hello', ['!', 'hello', '!']);
 });
 
 function getExpected(expected, num) {
