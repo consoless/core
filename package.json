@@ -14,6 +14,7 @@
   },
   "scripts": {
     "lint": "xo",
+    "coverage": "nyc report --reporter=text-lcov",
     "test": "nyc ava",
     "test:watch": "npm run test -- -watch",
     "build": "npm run lint && webpack -p",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "ava": "^0.17.0",
     "babel-loader": "6.2.10",
+    "babel-plugin-istanbul": "^4.0.0",
     "babel-preset-env": "^1.1.8",
     "babel-register": "6.22.0",
     "nyc": "^10.1.2",
@@ -48,5 +50,21 @@
     "require": [
       "babel-register"
     ]
+  },
+  "nyc": {
+    "include": [
+      "test.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "check-coverage": true,
+    "sourceMap": false,
+    "instrument": false
   }
 }
