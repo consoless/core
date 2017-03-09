@@ -122,6 +122,14 @@ test('transformer is applied', t => {
   return callLogMethods(t);
 });
 
+test('transformers return arrays', async t => {
+  const notAnArray = null;
+  t.context.addTransformer((type, resolvedParts) => (t.pass(), notAnArray));
+
+  const err = await t.throws(callLogMethods(t));
+  t.is(err.message, 'Transformers should return an array of messages')
+});
+
 test('transformers are applied synchronous', t => {
   t.plan(12);
   t.context.addTransformer((type, resolvedParts) => (t.pass(), resolvedParts));
@@ -363,6 +371,18 @@ test('transformers modify message', t => {
   t.context.addTransformer((type, resolvedParts) => ['!'].concat(resolvedParts));
 
   return handlerLogMethods(t, 'hello', ['!', 'hello', '!']);
+});
+
+test('throws if added modifier is invalid', t => {
+  const invalidModifier = 'invalidModifier';
+  const err = t.throws(() => t.context.addUniqueModifier(invalidModifier));
+  t.is(err.message, `Illegal modifier ${invalidModifier}`);
+});
+
+test('throws if modifier misses its config', t => {
+  delete t.context.config.transports;
+  const err = t.throws(() => t.context.addTransport(() => {}));
+  t.is(err.message, 'Missing config for modifier transports');
 });
 
 function getExpected(expected, num) {

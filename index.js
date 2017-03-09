@@ -57,7 +57,7 @@ function reduceTransports(transports, type, args) {
   return Promise.all(transports.map(transport => transport(type, args))).then(() => args);
 }
 
-function reduceTransportsSync(transports, type, args) {
+/*function reduceTransportsSync(transports, type, args) {
   transports.reduce((result, transport) => {
     if (isPromise(result)) {
       return result.then(() => transport(type, args));
@@ -67,7 +67,7 @@ function reduceTransportsSync(transports, type, args) {
   }, null);
 
   return args;
-}
+}*/
 
 class CConsole {
   constructor({customLogHandler, syncTransports} = {}) {
@@ -157,9 +157,9 @@ class CConsole {
   // }
 
   logHandler(level, args) {
-    if (typeof this.customLogHandler === 'function') {
-      return this.customLogHandler(level, args);
-    }
+    // if (typeof this.customLogHandler === 'function') {
+    //   return this.customLogHandler(level, args);
+    // }
 
     // TODO check if transformer is a function somewhere
     return Promise.resolve(reduceTransformers(this.transformers, level, args))
@@ -169,7 +169,8 @@ class CConsole {
           return parts;
         }
 
-        return (this.syncTransports ? reduceTransportsSync : reduceTransports)(this.transports, level, parts);
+        // return (this.syncTransports ? reduceTransportsSync : reduceTransports)(this.transports, level, parts);
+        return reduceTransports(this.transports, level, parts);
       });
   }
 }
