@@ -1,5 +1,6 @@
 import test from 'ava';
 import cconsole, {LOG_LEVEL} from './index';
+import {applyPlugin, getPlugins} from './plugin';
 
 // console.dir(cconsole);
 // function logTransport(type, messages) {
@@ -44,6 +45,29 @@ function spy(fn) {
 
 test.beforeEach(t => {
   t.context = cconsole.profile();
+});
+
+test.only('apply plugin', t => {
+  const sayHelloPlugin = {
+    sayHello() {
+      return 'hello';
+    }
+  };
+
+  const sayGoodByePlugin = {
+    sayGoodBye() {
+      return this.sayHello() + ' and bye';
+    }
+  };
+
+  // t.context = applyPlugin(t.context, [sayHelloPlugin, sayGoodByePlugin]);
+  t.context = applyPlugin(t.context, sayHelloPlugin);
+  t.context = applyPlugin(t.context, sayGoodByePlugin);
+// console.dir((t.context))
+console.dir((t.context.__proto__))
+// console.dir(getPlugins(t.context))
+  t.is(t.context.sayHello(), 'hello');
+  t.is(t.context.sayGoodBye(), 'hello and bye');
 });
 
 test('cconsole instance is exported by default', t => {
