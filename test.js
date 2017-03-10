@@ -103,7 +103,7 @@ test('log methods are handled depending on level', async t => {
     ['hello'] // exception
   );
 
-    // set ERROR and WARN levels
+  // set ERROR and WARN levels
   t.context.setLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN);
   await handlerLogMethods(t, 'hello',
     ['hello'], // error
@@ -113,6 +113,14 @@ test('log methods are handled depending on level', async t => {
     undefined, // debug
     ['hello'] // exception
   );
+});
+
+test('transformers and transport are not called when log level is not suite', async t => {
+  t.plan(1);
+  t.context.setLevel(LOG_LEVEL.WARN);
+  t.context.addTransformer((type, resolvedParts) => (t.pass(), resolvedParts));
+  t.context.addTransport((type, resolvedParts) => t.pass());
+  t.is(t.context.error('hello'), undefined);
 });
 
 test('transformer is applied', t => {
