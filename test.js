@@ -55,11 +55,11 @@ test('new instance of cconsole creates', t => {
 });
 
 test('no transports by default', t => {
-  t.is(t.context.transports.length, 0);
+  t.is(t.context.transports.size, 0);
 });
 
 test('no transformers by default', t => {
-  t.is(t.context.transformers.length, 0);
+  t.is(t.context.transformers.size, 0);
 });
 
 test('message is not modified without transformers and transports', t => handlerLogMethods(t, 'hello', ['hello']));
@@ -120,6 +120,14 @@ test('transformer is applied', t => {
   t.context.addTransformer((type, resolvedParts) => (t.pass(), resolvedParts));
 
   return callLogMethods(t);
+});
+
+test(`same transformers are not added twice`, t => {
+  const tr = (type, resolvedParts) => (t.pass(), resolvedParts);
+  t.context.addTransformer(tr);
+  t.context.addTransformer(tr);
+
+  t.is(t.context.transformers.size, 1);
 });
 
 test('transformers return arrays', async t => {
@@ -257,6 +265,14 @@ test('transport is applied', t => {
   t.context.addTransport((type, resolvedParts) => t.pass());
 
   return callLogMethods(t);
+});
+
+test(`same transports are not added twice`, t => {
+  const tr = (type, resolvedParts) => t.pass();
+  t.context.addTransport(tr);
+  t.context.addTransport(tr);
+
+  t.is(t.context.transports.size, 1);
 });
 
 test('transports are applied synchronous', t => {

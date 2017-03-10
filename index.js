@@ -74,8 +74,8 @@ class CConsole {
     this.customLogHandler = customLogHandler;
     this.syncTransports = syncTransports || false;
     this.level = LOG_LEVEL.ALL;
-    this.transformers = []; // candidate for Set
-    this.transports = []; // candidate for Set
+    this.transformers = new Map();
+    this.transports = new Map();
     this.config = {
       transports: {},
       transformers: {}
@@ -94,7 +94,7 @@ class CConsole {
       throw new Error(`Missing config for modifier ${modifiersName}`);
     }
 
-    if (modifiers.indexOf(modifierFn) === -1) {
+    if (!modifiers.has(modifierFn)) {
       // const hasConfig = Object.keys(modifierConfig).length > 0;
       // save config to be able to modify it from outside
       if (modifierFn.name) {
@@ -102,7 +102,7 @@ class CConsole {
       }
 
       // bind config in any case for usage consistency
-      modifiers.push(modifierFn.bind({
+      modifiers.set(modifierFn, modifierFn.bind({
         config: modifierConfig
       }));
     }
@@ -162,15 +162,15 @@ class CConsole {
     // }
 
     // TODO check if transformer is a function somewhere
-    return Promise.resolve(reduceTransformers(this.transformers, level, args))
+    return Promise.resolve(reduceTransformers(Array.from(this.transformers.values()), level, args))
       .then(validateParts)
       .then(parts => {
-        if (this.transports.length === 0) {
+        if (this.transports.size === 0) {
           return parts;
         }
 
         // return (this.syncTransports ? reduceTransportsSync : reduceTransports)(this.transports, level, parts);
-        return reduceTransports(this.transports, level, parts);
+        return reduceTransports(Array.from(this.transports.values()), level, parts);
       });
   }
 }
