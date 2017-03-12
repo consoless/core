@@ -178,13 +178,13 @@ class CConsole {
 CConsole.prototype.debug = CConsole.prototype.log;
 CConsole.prototype.exception = CConsole.prototype.error;
 
-const cconsoleInstance = new CConsole();
-const cconsole = Object.create(cconsoleInstance);
+function cconsoleFactory(name, options = {}) {
+  return Object.create(new CConsole());
+}
 
-cconsole.profile = function (name, options = {}) {
-  return new CConsole(options);
-};
+const cconsole = cconsoleFactory();
 
+cconsole.profile = cconsoleFactory;
 cconsole.CConsole = CConsole;
 
 cconsole.paranoya = {
