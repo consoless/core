@@ -46,10 +46,6 @@ test.beforeEach(t => {
   t.context = coreLess.profile();
 });
 
-test('coreLess instance is exported by default', t => {
-  t.true(coreLess instanceof coreLess.CoreLess);
-});
-
 test('new instance of coreLess creates', t => {
   t.true(t.context instanceof coreLess.CoreLess);
 });

@@ -136,7 +136,7 @@ function coreFactory(name, options = {}) {
   return Object.create(new CoreLess());
 }
 
-const coreLess = coreFactory();
+const coreLess = {};
 
 coreLess.profile = coreFactory;
 coreLess.CoreLess = CoreLess;
