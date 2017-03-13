@@ -57,22 +57,9 @@ function reduceTransports(transports, type, args) {
   return Promise.all(transports.map(transport => transport(type, args))).then(() => args);
 }
 
-/*function reduceTransportsSync(transports, type, args) {
-  transports.reduce((result, transport) => {
-    if (isPromise(result)) {
-      return result.then(() => transport(type, args));
-    }
-
-    return transport(type, args);
-  }, null);
-
-  return args;
-}*/
-
 class CoreLess {
-  constructor({customLogHandler, syncTransports} = {}) {
+  constructor({customLogHandler} = {}) {
     this.customLogHandler = customLogHandler;
-    this.syncTransports = syncTransports || false;
     this.level = LOG_LEVEL.ALL;
     this.transformers = new Map();
     this.transports = new Map();
@@ -169,7 +156,6 @@ class CoreLess {
           return parts;
         }
 
-        // return (this.syncTransports ? reduceTransportsSync : reduceTransports)(this.transports, level, parts);
         return reduceTransports(Array.from(this.transports.values()), level, parts);
       });
   }
