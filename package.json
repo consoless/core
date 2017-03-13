@@ -1,9 +1,9 @@
 {
-  "name": "cconsole",
+  "name": "@consoless/core",
   "version": "0.0.1",
   "description": "Modern modular logger for your web apps",
   "license": "MIT",
-  "repository": "likerRr/cconsole",
+  "repository": "consoless/core",
   "author": {
     "name": "Alexey Lizurchik",
     "email": "al.lizurchik@gmail.com",

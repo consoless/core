@@ -69,7 +69,7 @@ function reduceTransports(transports, type, args) {
   return args;
 }*/
 
-class CConsole {
+class Consoless {
   constructor({customLogHandler, syncTransports} = {}) {
     this.customLogHandler = customLogHandler;
     this.syncTransports = syncTransports || false;
@@ -175,31 +175,31 @@ class CConsole {
   }
 }
 
-CConsole.prototype.debug = CConsole.prototype.log;
-CConsole.prototype.exception = CConsole.prototype.error;
+Consoless.prototype.debug = Consoless.prototype.log;
+Consoless.prototype.exception = Consoless.prototype.error;
 
-function cconsoleFactory(name, options = {}) {
-  return Object.create(new CConsole());
+function consolessFactory(name, options = {}) {
+  return Object.create(new Consoless());
 }
 
-const cconsole = cconsoleFactory();
+const consoless = consolessFactory();
 
-cconsole.profile = cconsoleFactory;
-cconsole.CConsole = CConsole;
+consoless.profile = consolessFactory;
+consoless.Consoless = Consoless;
 
-cconsole.paranoya = {
+consoless.paranoya = {
   enabled: false,
   secretKey: null
 };
 //
-// const cconsoleInstance = new CConsole();
+// const consolessInstance = new Consoless();
 //
 // Object.keys(LOG_FUNCTION_MAP).map(key => {
 // 	const logFn = LOG_FUNCTION_MAP[key];
 //
-// 	cconsole[logFn] = cconsoleInstance[logFn].bind(cconsoleInstance);
+// 	consoless[logFn] = consolessInstance[logFn].bind(consolessInstance);
 // });
 //
-// cconsole.setLevel = cconsoleInstance.setLevel.bind(cconsoleInstance);
+// consoless.setLevel = consolessInstance.setLevel.bind(consolessInstance);
 
-export default cconsole;
+export default consoless;

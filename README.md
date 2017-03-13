@@ -1,11 +1,11 @@
-# cconsole [![Build Status](https://travis-ci.org/likerRr/cconsole.svg?branch=master)](https://travis-ci.org/likerRr/cconsole)
+# Consoless core [![Build Status](https://travis-ci.org/consoless/core.svg?branch=master)](https://travis-ci.org/consoless/core)
 
 Temporary home
 
 ## Install
 
 ```
-$ npm install --save cconsole
+$ npm install --save @consoless/core
 ```
 
 ## License
