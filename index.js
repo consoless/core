@@ -69,7 +69,7 @@ function reduceTransports(transports, type, args) {
   return args;
 }*/
 
-class Consoless {
+class CoreLess {
   constructor({customLogHandler, syncTransports} = {}) {
     this.customLogHandler = customLogHandler;
     this.syncTransports = syncTransports || false;
@@ -175,31 +175,31 @@ class Consoless {
   }
 }
 
-Consoless.prototype.debug = Consoless.prototype.log;
-Consoless.prototype.exception = Consoless.prototype.error;
+CoreLess.prototype.debug = CoreLess.prototype.log;
+CoreLess.prototype.exception = CoreLess.prototype.error;
 
-function consolessFactory(name, options = {}) {
-  return Object.create(new Consoless());
+function coreFactory(name, options = {}) {
+  return Object.create(new CoreLess());
 }
 
-const consoless = consolessFactory();
+const coreLess = coreFactory();
 
-consoless.profile = consolessFactory;
-consoless.Consoless = Consoless;
+coreLess.profile = coreFactory;
+coreLess.CoreLess = CoreLess;
 
-consoless.paranoya = {
+coreLess.paranoya = {
   enabled: false,
   secretKey: null
 };
 //
-// const consolessInstance = new Consoless();
+// const coreInstance = new CoreLess();
 //
 // Object.keys(LOG_FUNCTION_MAP).map(key => {
 // 	const logFn = LOG_FUNCTION_MAP[key];
 //
-// 	consoless[logFn] = consolessInstance[logFn].bind(consolessInstance);
+// 	coreLess[logFn] = coreInstance[logFn].bind(coreInstance);
 // });
 //
-// consoless.setLevel = consolessInstance.setLevel.bind(consolessInstance);
+// coreLess.setLevel = coreInstance.setLevel.bind(coreInstance);
 
-export default consoless;
+export default coreLess;

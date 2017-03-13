@@ -1,7 +1,7 @@
 import test from 'ava';
-import consoless, {LOG_LEVEL} from './index';
+import coreLess, {LOG_LEVEL} from './index';
 
-// console.dir(consoless);
+// console.dir(coreLess);
 // function logTransport(type, messages) {
 // 	// if (LOG_LEVEL.WARN === type) {
 // 	// 	console.warn.apply(null, messages);
@@ -16,14 +16,14 @@ import consoless, {LOG_LEVEL} from './index';
 // function other(type, message) {
 // 	console.log(22);
 // }
-// consoless.addTransport(logTransport, {});
-// consoless.addTransport(other);
-// // consoless.setLevel(LOG_LEVEL.ALL & ~LOG_LEVEL.ERROR);
-// consoless.setLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN);
-// consoless.error('err msg');
-// consoless.warn('warn msg');
-// consoless.info('info msg');
-// consoless.debug('debug msg');
+// coreLess.addTransport(logTransport, {});
+// coreLess.addTransport(other);
+// // coreLess.setLevel(LOG_LEVEL.ALL & ~LOG_LEVEL.ERROR);
+// coreLess.setLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN);
+// coreLess.error('err msg');
+// coreLess.warn('warn msg');
+// coreLess.info('info msg');
+// coreLess.debug('debug msg');
 
 // TODO update
 function spy(fn) {
@@ -43,15 +43,15 @@ function spy(fn) {
 }
 
 test.beforeEach(t => {
-  t.context = consoless.profile();
+  t.context = coreLess.profile();
 });
 
-test('consoless instance is exported by default', t => {
-  t.true(consoless instanceof consoless.Consoless);
+test('coreLess instance is exported by default', t => {
+  t.true(coreLess instanceof coreLess.CoreLess);
 });
 
-test('new instance of consoless creates', t => {
-  t.true(t.context instanceof consoless.Consoless);
+test('new instance of coreLess creates', t => {
+  t.true(t.context instanceof coreLess.CoreLess);
 });
 
 test('no transports by default', t => {
@@ -76,19 +76,19 @@ test('operations with level', t => {
 });
 
 test('set level', t => {
-  const _consoless = t.context;
+  const _coreLess = t.context;
 
   // default level
-  t.is(_consoless.level, LOG_LEVEL.ALL);
+  t.is(_coreLess.level, LOG_LEVEL.ALL);
 
   // set ERROR level
-  _consoless.setLevel(LOG_LEVEL.ERROR);
-  t.true(_consoless.checkLevel(LOG_LEVEL.ERROR));
+  _coreLess.setLevel(LOG_LEVEL.ERROR);
+  t.true(_coreLess.checkLevel(LOG_LEVEL.ERROR));
 
-  _consoless.setLevel(LOG_LEVEL.WARN | LOG_LEVEL.ERROR);
-  t.true(_consoless.checkLevel(LOG_LEVEL.WARN));
-  t.true(_consoless.checkLevel(LOG_LEVEL.ERROR));
-  t.true(_consoless.checkLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN));
+  _coreLess.setLevel(LOG_LEVEL.WARN | LOG_LEVEL.ERROR);
+  t.true(_coreLess.checkLevel(LOG_LEVEL.WARN));
+  t.true(_coreLess.checkLevel(LOG_LEVEL.ERROR));
+  t.true(_coreLess.checkLevel(LOG_LEVEL.ERROR | LOG_LEVEL.WARN));
 });
 
 test('log methods are handled depending on level', async t => {
@@ -293,7 +293,7 @@ test('transports are applied synchronous', t => {
   return callLogMethods(t);
 });
 
-// TODO implement, when consoless's config is implemented
+// TODO implement, when coreLess's config is implemented
 test.skip('transports are applied consistently', async t => {
   // 6 for each transport
   t.plan(12);
@@ -421,13 +421,13 @@ function getExpected(expected, num) {
  * @return {Promise.<void>}
  */
 async function handlerLogMethods(t, input, ...expected) {
-  const consoless = t.context;
-  t.deepEqual(await consoless.error(input), getExpected(expected, 0));
-  t.deepEqual(await consoless.info(input), getExpected(expected, 1));
-  t.deepEqual(await consoless.log(input), getExpected(expected, 2));
-  t.deepEqual(await consoless.warn(input), getExpected(expected, 3));
-  t.deepEqual(await consoless.debug(input), getExpected(expected, 4));
-  t.deepEqual(await consoless.exception(input), getExpected(expected, 5));
+  const coreLess = t.context;
+  t.deepEqual(await coreLess.error(input), getExpected(expected, 0));
+  t.deepEqual(await coreLess.info(input), getExpected(expected, 1));
+  t.deepEqual(await coreLess.log(input), getExpected(expected, 2));
+  t.deepEqual(await coreLess.warn(input), getExpected(expected, 3));
+  t.deepEqual(await coreLess.debug(input), getExpected(expected, 4));
+  t.deepEqual(await coreLess.exception(input), getExpected(expected, 5));
 }
 
 /**
@@ -437,11 +437,11 @@ async function handlerLogMethods(t, input, ...expected) {
  * @return {Promise.<void>}
  */
 async function callLogMethods(t, input) {
-  const consoless = t.context;
-  await consoless.error(input);
-  await consoless.info(input);
-  await consoless.log(input);
-  await consoless.warn(input);
-  await consoless.debug(input);
-  await consoless.exception(input);
+  const coreLess = t.context;
+  await coreLess.error(input);
+  await coreLess.info(input);
+  await coreLess.log(input);
+  await coreLess.warn(input);
+  await coreLess.debug(input);
+  await coreLess.exception(input);
 }
