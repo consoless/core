@@ -1,12 +1,4 @@
-// @see http://m15.ru/bitmask_in_php
-// https://github.com/pimterry/loglevel
-// import md5 from './just-md5';
 import isPromise from 'is-promise';
-// console.log(md5('hello'));
-// let realConsole = console;
-// realConsole.log = function() {
-// 	console.log(super);
-// };
 
 export const LOG_LEVEL = {
   WARN: 1,
@@ -18,22 +10,6 @@ export const LOG_LEVEL = {
 };
 
 LOG_LEVEL.ALL = LOG_LEVEL.WARN | LOG_LEVEL.ERROR | LOG_LEVEL.INFO | LOG_LEVEL.DEBUG;
-
-/*
-const LOG_TYPE = {
-  ERROR: 1,
-  INFO: 2,
-  LOG: 4,
-  WARN: 8,
-};
-
-const LOG_FUNCTION_MAP = {
-  ERROR: 'error',
-  INFO: 'info',
-  LOG: 'log',
-  WARN: 'warn',
-};
-*/
 
 function validateParts(parts) {
   if (!Array.isArray(parts)) {
@@ -135,14 +111,6 @@ class CoreLess {
     }
   }
 
-  // consoleLogProvider(type, args) {
-  // 	if (LOG_FUNCTION_MAP.hasOwnProperty(type)) {
-  // 		return console[LOG_FUNCTION_MAP[type]].apply(console, args);
-  // 	}
-  //
-  // 	throw new TypeError(`Type ${type} is not exists`);
-  // }
-
   logHandler(level, args) {
     // if (typeof this.customLogHandler === 'function') {
     //   return this.customLogHandler(level, args);
@@ -177,15 +145,5 @@ coreLess.paranoya = {
   enabled: false,
   secretKey: null
 };
-//
-// const coreInstance = new CoreLess();
-//
-// Object.keys(LOG_FUNCTION_MAP).map(key => {
-// 	const logFn = LOG_FUNCTION_MAP[key];
-//
-// 	coreLess[logFn] = coreInstance[logFn].bind(coreInstance);
-// });
-//
-// coreLess.setLevel = coreInstance.setLevel.bind(coreInstance);
 
 export default coreLess;
