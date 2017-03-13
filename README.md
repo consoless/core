@@ -1,6 +1,6 @@
 # Consoless core [![Build Status](https://travis-ci.org/consoless/core.svg?branch=master)](https://travis-ci.org/consoless/core)
 
-Powerful yet light library for handling user messages.
+Powerful yet light library for handling messages produced by your app.
 
 ## Install
 
