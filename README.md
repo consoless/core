@@ -1,4 +1,8 @@
-# Consoless core [![Build Status](https://travis-ci.org/consoless/core.svg?branch=master)](https://travis-ci.org/consoless/core)
+![Dependencies](https://img.shields.io/david/consoless/core.svg)
+![Build Status](https://img.shields.io/travis/consoless/core/master.svg)
+![Coverage](https://img.shields.io/codecov/c/github/consoless/core/master.svg)
+
+# Consoless core
 
 Powerful yet light library for handling messages produced by your app.
 
