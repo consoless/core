@@ -132,7 +132,7 @@ class CoreLess {
 CoreLess.prototype.debug = CoreLess.prototype.log;
 CoreLess.prototype.exception = CoreLess.prototype.error;
 
-function coreFactory(name, options = {}) {
+function coreFactory(options = {}) {
   return Object.create(new CoreLess(options));
 }
 
