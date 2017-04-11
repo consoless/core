@@ -133,7 +133,7 @@ CoreLess.prototype.debug = CoreLess.prototype.log;
 CoreLess.prototype.exception = CoreLess.prototype.error;
 
 function coreFactory(name, options = {}) {
-  return Object.create(new CoreLess());
+  return Object.create(new CoreLess(options));
 }
 
 const coreLess = {};
