@@ -34,7 +34,7 @@ function reduceTransports(transports, type, args) {
 }
 
 class CoreLess {
-  constructor({customLogHandler} = {}) {
+  constructor({customLogHandler}) {
     this.customLogHandler = customLogHandler;
     this.level = LOG_LEVEL.ALL;
     this.transformers = new Map();
