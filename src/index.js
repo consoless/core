@@ -1,15 +1,5 @@
-import isPromise from 'is-promise';
-
-export const LOG_LEVEL = {
-  WARN: 1,
-  ERROR: 2,
-  INFO: 4,
-  DEBUG: 8
-  // PROD:
-  // DEV:
-};
-
-LOG_LEVEL.ALL = LOG_LEVEL.WARN | LOG_LEVEL.ERROR | LOG_LEVEL.INFO | LOG_LEVEL.DEBUG;
+const isPromise = require('is-promise');
+const {LOG_LEVEL, isLevel} = require('./levels');
 
 function validateParts(parts) {
   if (!Array.isArray(parts)) {
@@ -58,13 +48,12 @@ class CoreLess {
     }
 
     if (!modifiers.has(modifierFn)) {
-      // const hasConfig = Object.keys(modifierConfig).length > 0;
-      // save config to be able to modify it from outside
+      // Save config to be able to modify it from outside
       if (modifierFn.name) {
         modifiersConfig[modifierFn.name] = modifierConfig;
       }
 
-      // bind config in any case for usage consistency
+      // Bind config in any case for usage consistency
       modifiers.set(modifierFn, modifierFn.bind({
         config: modifierConfig
       }));
@@ -84,7 +73,7 @@ class CoreLess {
   }
 
   checkLevel(level) {
-    return (this.level & level) > 0;
+    return isLevel(this.level, level);
   }
 
   error(...args) {
@@ -112,6 +101,7 @@ class CoreLess {
   }
 
   logHandler(level, args) {
+    // eslint-disable-next-line capitalized-comments
     // if (typeof this.customLogHandler === 'function') {
     //   return this.customLogHandler(level, args);
     // }
@@ -136,7 +126,7 @@ function coreFactory(options = {}) {
   return Object.create(new CoreLess(options));
 }
 
-const coreLess = {};
+const coreLess = {LOG_LEVEL, isLevel};
 
 coreLess.profile = coreFactory;
 coreLess.CoreLess = CoreLess;
@@ -146,4 +136,4 @@ coreLess.paranoya = {
   secretKey: null
 };
 
-export default coreLess;
+module.exports = coreLess;

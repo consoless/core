@@ -1,6 +1,6 @@
 {
   "name": "@consoless/core",
-  "version": "0.0.1",
+  "version": "1.0.0-beta.1",
   "description": "Modern modular logger for your web apps",
   "license": "MIT",
   "repository": "consoless/core",
@@ -19,34 +19,44 @@
     "test": "nyc ava",
     "test:watch": "npm run test -- -watch",
     "build": "npm run lint && webpack -p",
-    "start": "npm run lint && webpack --watch"
+    "start": "npm run lint && webpack --watch",
+    "precommit": "npm run test && npm run build",
+    "prepublish": "npm run precommit"
   },
   "files": [
-    "index.js"
+    "src",
+    "dist/bundle.umd.js"
   ],
-  "browser": "dist/bundle.js",
-  "main": "index.js",
+  "browser": "dist/bundle.umd.js",
+  "main": "src/index.js",
   "keywords": [
-    ""
+    "logger",
+    "modular",
+    "node",
+    "web-app",
+    "ES6"
   ],
   "dependencies": {
     "is-promise": "^2.1.0"
   },
   "devDependencies": {
-    "ava": "^0.18.2",
+    "ava": "^0.19.1",
     "babel-loader": "^6.4.0",
     "babel-plugin-istanbul": "^4.0.0",
     "babel-preset-env": "^1.1.8",
     "babel-register": "^6.23.0",
-    "codecov": "^1.0.1",
+    "codecov": "^2.1.0",
     "nyc": "^10.1.2",
-    "webpack": "2.2.1",
-    "xo": "^0.17.0"
+    "webpack": "2.3.3",
+    "xo": "^0.18.1"
   },
   "xo": {
     "esnext": true,
     "semicolon": true,
-    "space": 2
+    "space": 2,
+    "ignores": [
+      "test.js"
+    ]
   },
   "ava": {
     "require": [

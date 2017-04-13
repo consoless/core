@@ -3,11 +3,13 @@ import path from 'path';
 module.exports = {
   context: __dirname,
   entry: {
-    bundle: './index.js'
+    bundle: './src/index.js'
   },
   output: {
     path: path.join(__dirname, '/dist'),
-    filename: '[name].js'
+    filename: '[name].umd.js',
+    library: 'coreLess',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
@@ -22,8 +24,7 @@ module.exports = {
               targets: {
                 browsers: [
                   'last 2 versions'
-                ],
-                node: 6.9
+                ]
               }
             }]
           ],

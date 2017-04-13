@@ -1,5 +1,5 @@
 import test from 'ava';
-import coreLess, {LOG_LEVEL} from './index';
+import coreLess, {LOG_LEVEL} from './src/index';
 
 // console.dir(coreLess);
 // function logTransport(type, messages) {
