@@ -4,6 +4,8 @@
 
 # Consoless core
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/consoless/core.svg)](https://greenkeeper.io/)
+
 Powerful yet light library for handling messages produced by your app.
 
 ## Install
